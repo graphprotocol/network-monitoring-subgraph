@@ -1,6 +1,7 @@
 # Ignore truffle stuff
 build/
 
+subgraph.yaml
 generated/
 node_modules/
 src/types/
@@ -12,3 +13,4 @@ config/addresses.ts
 config/generatedAddresses.json
 tests/.bin
 .vscode
+.latest.json

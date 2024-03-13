@@ -1,8 +1,8 @@
 {
-  "sepolia": {
+  "arbitrum-sepolia": {
     "SubgraphAvailabilityManager": {
-      "address": "0x0539C6995aC74eBCBa449D88fD947eeD2877bE34",
-      "startBlock": 5109718
+      "address": "0x9bDC3264596850E7F5d141A8D898dFA7001355CC",
+      "startBlock": 22552633
     }
   }
 }
