@@ -1,0 +1,8 @@
+{
+  "arbitrum-sepolia": {
+    "SubgraphAvailabilityManager": {
+      "address": "0x9bDC3264596850E7F5d141A8D898dFA7001355CC",
+      "startBlock": 22552633
+    }
+  }
+}
