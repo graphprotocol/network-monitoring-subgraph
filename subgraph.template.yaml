@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: SubgraphAvailabilityManager
-    network: sepolia
+    network: arbitrum-sepolia
     source:
-      address: "0x0539C6995aC74eBCBa449D88fD947eeD2877bE34"
       abi: SubgraphAvailabilityManager
-      startBlock: 5109718
+      address: "0x9bDC3264596850E7F5d141A8D898dFA7001355CC"
+      startBlock: 22552633
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -34,3 +34,23 @@ dataSources:
         - event: VoteTimeLimitSet(uint256)
           handler: handleVoteTimeLimitSet
       file: ./src/subgraph-availability-manager.ts
+  - kind: ethereum
+    name: SAODataEdge
+    network: arbitrum-sepolia
+    source:
+      address: "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469"
+      abi: SAODataEdge
+      startBlock: 25463619
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Log
+      abis:
+        - name: SAODataEdge
+          file: ./abis/SAODataEdge.json
+      eventHandlers:
+        - event: Log(bytes)
+          handler: handleLog
+      file: ./src/sao-data-edge.ts

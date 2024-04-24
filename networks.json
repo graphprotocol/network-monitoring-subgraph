@@ -3,6 +3,10 @@
     "SubgraphAvailabilityManager": {
       "address": "0x9bDC3264596850E7F5d141A8D898dFA7001355CC",
       "startBlock": 22552633
+    },
+    "SAODataEdge": {
+      "address": "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469",
+      "startBlock": 25463619
     }
   }
 }

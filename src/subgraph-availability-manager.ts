@@ -1,87 +1,38 @@
 import {
-  NewOwnership as NewOwnershipEvent,
-  NewPendingOwnership as NewPendingOwnershipEvent,
   OracleSet as OracleSetEvent,
   OracleVote as OracleVoteEvent,
-  VoteTimeLimitSet as VoteTimeLimitSetEvent
 } from "../generated/SubgraphAvailabilityManager/SubgraphAvailabilityManager"
-import {
-  NewOwnership,
-  NewPendingOwnership,
-  OracleSet,
-  OracleVote,
-  VoteTimeLimitSet
-} from "../generated/schema"
 
-export function handleNewOwnership(event: NewOwnershipEvent): void {
-  let entity = new NewOwnership(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleNewPendingOwnership(
-  event: NewPendingOwnershipEvent
-): void {
-  let entity = new NewPendingOwnership(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
+import { StoreCache } from "./store-cache";
+import { getOracleVoteId } from "./helpers";
 
 export function handleOracleSet(event: OracleSetEvent): void {
-  let entity = new OracleSet(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.index = event.params.index
-  entity.oracle = event.params.oracle
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  let oracleIndex = event.params.index.toString();
+  let oracleAddress = event.params.oracle;
+  
+  let cache = new StoreCache();
+  let state = cache.getGlobalState();
+  let oracle = cache.getOracle(oracleIndex);
+  oracle.state = state.id;
+  oracle.address = oracleAddress;
+  oracle.latestConfig = "";
+  
+  cache.commitChanges();
 }
 
 export function handleOracleVote(event: OracleVoteEvent): void {
-  let entity = new OracleVote(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.subgraphDeploymentID = event.params.subgraphDeploymentID
-  entity.deny = event.params.deny
-  entity.oracleIndex = event.params.oracleIndex
-  entity.timestamp = event.params.timestamp
+  let subgraphDeploymentID = event.params.subgraphDeploymentID.toHexString();
+  let oracleIndex = event.params.oracleIndex.toString();
+  let timestamp = event.params.timestamp.toString();
+  let voteId = getOracleVoteId(subgraphDeploymentID, oracleIndex, timestamp);
+  
+  let cache = new StoreCache();
+  let oracle = cache.getOracle(oracleIndex);
+  let oracleVote = cache.getOracleVote(voteId);
+  oracleVote.subgraphDeploymentID = event.params.subgraphDeploymentID
+  oracleVote.deny = event.params.deny
+  oracleVote.oracle = oracle.id
+  oracleVote.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleVoteTimeLimitSet(event: VoteTimeLimitSetEvent): void {
-  let entity = new VoteTimeLimitSet(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.voteTimeLimit = event.params.voteTimeLimit
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  cache.commitChanges();
 }

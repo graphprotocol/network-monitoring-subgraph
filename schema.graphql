@@ -1,45 +1,36 @@
-type NewOwnership @entity(immutable: true) {
-  id: Bytes!
-  from: Bytes! # address
-  to: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type GlobalState @entity {
+  id: ID!
+  oracles: [Oracle!]! @derivedFrom(field: "state")
 }
 
-type NewPendingOwnership @entity(immutable: true) {
-  id: Bytes!
-  from: Bytes! # address
-  to: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type OracleSet @entity(immutable: true) {
-  id: Bytes!
-  index: BigInt! # uint256
-  oracle: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type Oracle @entity {
+  id: String! # oracle_index
+  state: GlobalState!
+  address: Bytes!
+  latestConfig: OracleConfiguration!
+  configurations: [OracleConfiguration!]! @derivedFrom(field: "oracle")
+  votes: [OracleVote!]! @derivedFrom(field: "oracle")
 }
 
 type OracleVote @entity(immutable: true) {
-  id: Bytes!
+  id: ID!
+  oracle: Oracle!
   subgraphDeploymentID: Bytes! # bytes32
   deny: Boolean! # bool
-  oracleIndex: BigInt! # uint256
   timestamp: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
 
-type VoteTimeLimitSet @entity(immutable: true) {
-  id: Bytes!
-  voteTimeLimit: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type OracleConfiguration @entity {
+  id: ID!
+  oracle: Oracle!
+  commitHash: String!
+  ipfsConcurrency: String!
+  ipfsTimeout: String!
+  minSignal: String!
+  period: String!
+  gracePeriod: String!
+  supportedDataSourceKinds: String!
+  subgraph: String!
+  subgraphAvailabilityManagerContract: String!
+  oracleIndex: String!
 }
