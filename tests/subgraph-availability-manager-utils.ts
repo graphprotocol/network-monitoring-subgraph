@@ -24,12 +24,15 @@ export function createOracleSetEvent(
 }
 
 export function createOracleVoteEvent(
+  oracleAddress: Address,
   subgraphDeploymentID: Bytes,
   deny: boolean,
   oracleIndex: BigInt,
   timestamp: BigInt
 ): OracleVote {
-  let oracleVoteEvent = changetype<OracleVote>(newMockEvent())
+  let event = newMockEvent()
+  event.transaction.from = oracleAddress
+  let oracleVoteEvent = changetype<OracleVote>(event)
 
   oracleVoteEvent.parameters = new Array()
 

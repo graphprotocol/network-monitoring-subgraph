@@ -1,15 +1,19 @@
 type GlobalState @entity {
   id: ID!
   oracles: [Oracle!]! @derivedFrom(field: "state")
+  activeOracles: [Oracle!]!
 }
 
 type Oracle @entity {
-  id: String! # oracle_index
+  id: Bytes! # address
+  index: String! # oracle_index
   state: GlobalState!
-  address: Bytes!
   latestConfig: OracleConfiguration!
   configurations: [OracleConfiguration!]! @derivedFrom(field: "oracle")
   votes: [OracleVote!]! @derivedFrom(field: "oracle")
+  active: Boolean!
+  activeSince: BigInt!
+  activeUntil: BigInt! # 0 means active
 }
 
 type OracleVote @entity(immutable: true) {
@@ -20,7 +24,7 @@ type OracleVote @entity(immutable: true) {
   timestamp: BigInt! # uint256
 }
 
-type OracleConfiguration @entity {
+type OracleConfiguration @entity(immutable: true) {
   id: ID!
   oracle: Oracle!
   commitHash: String!
@@ -33,4 +37,5 @@ type OracleConfiguration @entity {
   subgraph: String!
   subgraphAvailabilityManagerContract: String!
   oracleIndex: String!
+  createdAt: BigInt!
 }

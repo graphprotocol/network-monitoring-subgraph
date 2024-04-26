@@ -5,13 +5,18 @@ import { StoreCache } from "./store-cache";
 import { ORACLE_CONFIGURATION_ABI } from "./constants";
 
 export function handleLog(event: LogEvent): void {
-  let submitter = event.transaction.from.toHexString();
-  event.logIndex.toI32();
-  processPayload(submitter, event.params.data, event.transaction.hash.toHexString());
+  let submitter = event.transaction.from;
+  processPayload(submitter, event.params.data, event.transaction.hash.toHexString(), event.block);
 }
 
-export function processPayload(submitter: string, payload: Bytes, txHash: string): void {
-  log.warning("Processing payload. Submitter: {}", [submitter]);
+export function processPayload(
+  submitter: Bytes,
+  payload: Bytes,
+  txHash: string,
+  block: ethereum.Block
+): void {
+  let submitterAddress = submitter.toHexString();
+  log.warning("Processing payload. Submitter: {}", [submitterAddress]);
 
   let cache = new StoreCache();
 
@@ -21,13 +26,13 @@ export function processPayload(submitter: string, payload: Bytes, txHash: string
   let decodedOracleIndex = decodedConfig[8].toString();
 
   if (!isSubmitterAllowed(cache, decodedOracleIndex, submitter)) {
-    log.error("Submitter not allowed: {}", [submitter]);
+    log.error("Submitter not allowed: {}", [submitterAddress]);
     return;
   }
 
   log.info("Submitter allowed", []);
 
-  let oracle = cache.getOracle(decodedOracleIndex);
+  let oracle = cache.getOracle(submitter);
   let config = cache.getOracleConfiguration(txHash);
   config.oracle = oracle.id;
   config.commitHash = decoded[0].toString();
@@ -40,6 +45,7 @@ export function processPayload(submitter: string, payload: Bytes, txHash: string
   config.subgraph = decodedConfig[6].toString();
   config.subgraphAvailabilityManagerContract = decodedConfig[7].toString();
   config.oracleIndex = decodedOracleIndex;
+  config.createdAt = block.timestamp;
 
   oracle.latestConfig = config.id;
 

@@ -23,16 +23,10 @@ dataSources:
         - name: SubgraphAvailabilityManager
           file: ./abis/SubgraphAvailabilityManager.json
       eventHandlers:
-        - event: NewOwnership(indexed address,indexed address)
-          handler: handleNewOwnership
-        - event: NewPendingOwnership(indexed address,indexed address)
-          handler: handleNewPendingOwnership
         - event: OracleSet(indexed uint256,indexed address)
           handler: handleOracleSet
         - event: OracleVote(indexed bytes32,bool,indexed uint256,uint256)
           handler: handleOracleVote
-        - event: VoteTimeLimitSet(uint256)
-          handler: handleVoteTimeLimitSet
       file: ./src/subgraph-availability-manager.ts
   - kind: ethereum
     name: SAODataEdge

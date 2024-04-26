@@ -9,7 +9,7 @@ export class SafeMap<K, V> extends Map<K, V> {
 
 export class StoreCache {
   state: GlobalState;
-  oracles: SafeMap<String, Oracle>;
+  oracles: SafeMap<Bytes, Oracle>;
   oraclesConfigs: SafeMap<String, OracleConfiguration>;
   oracleVotes: SafeMap<String, OracleVote>;
 
@@ -17,11 +17,12 @@ export class StoreCache {
     let state = GlobalState.load("0");
     if (state == null) {
       state = new GlobalState("0");
+      state.activeOracles = [];
       state.save();
     }
 
     this.state = state;
-    this.oracles = new SafeMap<String, Oracle>();
+    this.oracles = new SafeMap<Bytes, Oracle>();
     this.oraclesConfigs = new SafeMap<String, OracleConfiguration>();
     this.oracleVotes = new SafeMap<String, OracleVote>();
   }
@@ -30,13 +31,13 @@ export class StoreCache {
     return this.state;
   }
 
-  getOracle(id: String): Oracle {
+  getOracle(id: Bytes): Oracle {
     if (this.oracles.safeGet(id) == null) {
       let oracle = Oracle.load(id);
       if (oracle == null) {
         oracle = new Oracle(id);
         oracle.state = this.state.id;
-        oracle.address = Bytes.empty();
+        oracle.index = "";
       }
       this.oracles.set(id, oracle);
     }
