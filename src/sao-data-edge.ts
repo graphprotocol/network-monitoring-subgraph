@@ -23,7 +23,7 @@ export function processPayload(
   let parsedCalldata = parseCalldata(payload);
   let decoded = ethereum.decode(ORACLE_CONFIGURATION_ABI, parsedCalldata)!.toTuple();
   let decodedConfig = decoded[1].toTuple();
-  let decodedOracleIndex = decodedConfig[8].toString();
+  let decodedOracleIndex = decodedConfig[9].toString();
 
   if (!isSubmitterAllowed(cache, decodedOracleIndex, submitter)) {
     log.error("Submitter not allowed: {}", [submitterAddress]);
@@ -42,8 +42,9 @@ export function processPayload(
   config.period = decodedConfig[3].toString();
   config.gracePeriod = decodedConfig[4].toString();
   config.supportedDataSourceKinds = decodedConfig[5].toString();
-  config.subgraph = decodedConfig[6].toString();
-  config.subgraphAvailabilityManagerContract = decodedConfig[7].toString();
+  config.networkSubgraphId = decodedConfig[6].toString();
+  config.epochBlockOracleSubgraphId = decodedConfig[7].toString();
+  config.subgraphAvailabilityManagerContract = decodedConfig[8].toString();
   config.oracleIndex = decodedOracleIndex;
   config.createdAt = block.timestamp;
 

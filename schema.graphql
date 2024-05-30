@@ -34,7 +34,8 @@ type OracleConfiguration @entity(immutable: true) {
   period: String!
   gracePeriod: String!
   supportedDataSourceKinds: String!
-  subgraph: String!
+  networkSubgraphId: String!
+  epochBlockOracleSubgraphId: String!
   subgraphAvailabilityManagerContract: String!
   oracleIndex: String!
   createdAt: BigInt!
