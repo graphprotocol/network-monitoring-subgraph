@@ -27,15 +27,15 @@ type OracleVote @entity(immutable: true) {
 type OracleConfiguration @entity(immutable: true) {
   id: ID!
   oracle: Oracle!
-  commitHash: String!
+  version: String!
   ipfsConcurrency: String!
   ipfsTimeout: String!
   minSignal: String!
   period: String!
   gracePeriod: String!
   supportedDataSourceKinds: String!
-  networkSubgraphId: String!
-  epochBlockOracleSubgraphId: String!
+  networkSubgraphDeploymentId: String!
+  epochBlockOracleSubgraphDeploymentId: String!
   subgraphAvailabilityManagerContract: String!
   oracleIndex: String!
   createdAt: BigInt!
