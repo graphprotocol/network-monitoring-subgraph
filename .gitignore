@@ -14,3 +14,4 @@ config/generatedAddresses.json
 tests/.bin
 .vscode
 .latest.json
+.docker

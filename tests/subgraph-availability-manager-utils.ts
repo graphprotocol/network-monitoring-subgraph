@@ -1,48 +1,9 @@
 import { newMockEvent } from "matchstick-as"
 import { ethereum, Address, BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
-  NewOwnership,
-  NewPendingOwnership,
   OracleSet,
-  OracleVote,
-  VoteTimeLimitSet
+  OracleVote
 } from "../generated/SubgraphAvailabilityManager/SubgraphAvailabilityManager"
-
-export function createNewOwnershipEvent(
-  from: Address,
-  to: Address
-): NewOwnership {
-  let newOwnershipEvent = changetype<NewOwnership>(newMockEvent())
-
-  newOwnershipEvent.parameters = new Array()
-
-  newOwnershipEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
-  )
-  newOwnershipEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
-  )
-
-  return newOwnershipEvent
-}
-
-export function createNewPendingOwnershipEvent(
-  from: Address,
-  to: Address
-): NewPendingOwnership {
-  let newPendingOwnershipEvent = changetype<NewPendingOwnership>(newMockEvent())
-
-  newPendingOwnershipEvent.parameters = new Array()
-
-  newPendingOwnershipEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
-  )
-  newPendingOwnershipEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
-  )
-
-  return newPendingOwnershipEvent
-}
 
 export function createOracleSetEvent(
   index: BigInt,
@@ -63,12 +24,15 @@ export function createOracleSetEvent(
 }
 
 export function createOracleVoteEvent(
+  oracleAddress: Address,
   subgraphDeploymentID: Bytes,
   deny: boolean,
   oracleIndex: BigInt,
   timestamp: BigInt
 ): OracleVote {
-  let oracleVoteEvent = changetype<OracleVote>(newMockEvent())
+  let event = newMockEvent()
+  event.transaction.from = oracleAddress
+  let oracleVoteEvent = changetype<OracleVote>(event)
 
   oracleVoteEvent.parameters = new Array()
 
@@ -95,21 +59,4 @@ export function createOracleVoteEvent(
   )
 
   return oracleVoteEvent
-}
-
-export function createVoteTimeLimitSetEvent(
-  voteTimeLimit: BigInt
-): VoteTimeLimitSet {
-  let voteTimeLimitSetEvent = changetype<VoteTimeLimitSet>(newMockEvent())
-
-  voteTimeLimitSetEvent.parameters = new Array()
-
-  voteTimeLimitSetEvent.parameters.push(
-    new ethereum.EventParam(
-      "voteTimeLimit",
-      ethereum.Value.fromUnsignedBigInt(voteTimeLimit)
-    )
-  )
-
-  return voteTimeLimitSetEvent
 }

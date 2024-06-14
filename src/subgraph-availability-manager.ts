@@ -1,87 +1,64 @@
+import { BigInt, log } from "@graphprotocol/graph-ts"
+
 import {
-  NewOwnership as NewOwnershipEvent,
-  NewPendingOwnership as NewPendingOwnershipEvent,
   OracleSet as OracleSetEvent,
   OracleVote as OracleVoteEvent,
-  VoteTimeLimitSet as VoteTimeLimitSetEvent
 } from "../generated/SubgraphAvailabilityManager/SubgraphAvailabilityManager"
-import {
-  NewOwnership,
-  NewPendingOwnership,
-  OracleSet,
-  OracleVote,
-  VoteTimeLimitSet
-} from "../generated/schema"
-
-export function handleNewOwnership(event: NewOwnershipEvent): void {
-  let entity = new NewOwnership(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleNewPendingOwnership(
-  event: NewPendingOwnershipEvent
-): void {
-  let entity = new NewPendingOwnership(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
+import { Oracle } from "../generated/schema"
+import { StoreCache } from "./store-cache";
+import { getOracleVoteId } from "./helpers";
 
 export function handleOracleSet(event: OracleSetEvent): void {
-  let entity = new OracleSet(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.index = event.params.index
-  entity.oracle = event.params.oracle
+  let oracleIndex = event.params.index.toString();
+  let oracleAddress = event.params.oracle;
+  
+  let cache = new StoreCache();
+  let state = cache.getGlobalState();
+  let oracle = cache.getOracle(oracleAddress);
+  oracle.state = state.id;
+  oracle.index = oracleIndex;
+  oracle.latestConfig = "";
+  oracle.active = true
+  oracle.activeSince = event.block.timestamp;
+  oracle.activeUntil = BigInt.fromI32(0);
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  replaceActiveOracle(oracle, cache);
+  cache.commitChanges();
 }
 
 export function handleOracleVote(event: OracleVoteEvent): void {
-  let entity = new OracleVote(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.subgraphDeploymentID = event.params.subgraphDeploymentID
-  entity.deny = event.params.deny
-  entity.oracleIndex = event.params.oracleIndex
-  entity.timestamp = event.params.timestamp
+  let subgraphDeploymentID = event.params.subgraphDeploymentID.toHexString();
+  let oracleAddress = event.transaction.from.toHexString();
+  let timestamp = event.params.timestamp.toString();
+  let voteId = getOracleVoteId(subgraphDeploymentID, oracleAddress, timestamp);
+  
+  let cache = new StoreCache();
+  let oracle = cache.getOracle(event.transaction.from);
+  let oracleVote = cache.getOracleVote(voteId);
+  oracleVote.subgraphDeploymentID = event.params.subgraphDeploymentID
+  oracleVote.deny = event.params.deny
+  oracleVote.oracle = oracle.id
+  oracleVote.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  cache.commitChanges();
 }
 
-export function handleVoteTimeLimitSet(event: VoteTimeLimitSetEvent): void {
-  let entity = new VoteTimeLimitSet(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.voteTimeLimit = event.params.voteTimeLimit
+function replaceActiveOracle(newOracle: Oracle, cache: StoreCache): void {
+  let state = cache.getGlobalState();
+  let activeOracles = cache.getGlobalState().activeOracles;
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  for (let i = 0; i < activeOracles.length; i++) {
+    let currectActiveOracle = cache.getOracle(activeOracles[i]);
+    // Replacement is done by oracle_index
+    if (currectActiveOracle.index == newOracle.index) {
+      activeOracles[i] = newOracle.id;
+      state.activeOracles = activeOracles;
+      currectActiveOracle.active = false;
+      currectActiveOracle.activeUntil = newOracle.activeSince;
+      return;
+    }
+  }
 
-  entity.save()
+  activeOracles.push(newOracle.id);
+  state.activeOracles = activeOracles;
 }
