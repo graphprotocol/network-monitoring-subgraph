@@ -1,0 +1,50 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: SubgraphAvailabilityManager
+    network: arbitrum-sepolia
+    source:
+      abi: SubgraphAvailabilityManager
+      address: "0x71D9aE967d1f31fbbD1817150902de78f8f2f73E"
+      startBlock: 49584061
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NewOwnership
+        - NewPendingOwnership
+        - OracleSet
+        - OracleVote
+        - VoteTimeLimitSet
+      abis:
+        - name: SubgraphAvailabilityManager
+          file: ./abis/SubgraphAvailabilityManager.json
+      eventHandlers:
+        - event: OracleSet(indexed uint256,indexed address)
+          handler: handleOracleSet
+        - event: OracleVote(indexed bytes32,bool,indexed uint256,uint256)
+          handler: handleOracleVote
+      file: ./src/subgraph-availability-manager.ts
+  - kind: ethereum
+    name: SAODataEdge
+    network: arbitrum-sepolia
+    source:
+      address: "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469"
+      abi: SAODataEdge
+      startBlock: 49584061
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Log
+      abis:
+        - name: SAODataEdge
+          file: ./abis/SAODataEdge.json
+      eventHandlers:
+        - event: Log(bytes)
+          handler: handleLog
+      file: ./src/sao-data-edge.ts
