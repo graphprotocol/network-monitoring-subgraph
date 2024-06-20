@@ -8,7 +8,7 @@
     "create-local": "graph create --node http://localhost:8020/ network-monitoring-subgraph",
     "remove-local": "graph remove --node http://localhost:8020/ network-monitoring-subgraph",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 network-monitoring-subgraph",
-    "test": "yarn && yarn codegen && graph build --network arbitrum-sepolia && graph test",
+    "test": "yarn && yarn codegen && graph test",
     "deploy-arbitrum-sepolia": "yarn && yarn codegen && graph build --network arbitrum-sepolia && graph deploy --studio network-monitoring-subgraph"
   },
   "dependencies": {
