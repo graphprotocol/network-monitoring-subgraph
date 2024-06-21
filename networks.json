@@ -1,4 +1,14 @@
 {
+  "arbitrum": {
+    "SubgraphAvailabilityManager": {
+      "address": "0x1cB555359319A94280aCf85372Ac2323AaE2f5fd",
+      "startBlock": 223974980
+    },
+    "SAODataEdge": {
+      "address": "0xeD16cEbd4fa74a0016E1149cc03563Db4B223aec",
+      "startBlock": 223927924
+    }
+  },
   "arbitrum-sepolia": {
     "SubgraphAvailabilityManager": {
       "address": "0x71D9aE967d1f31fbbD1817150902de78f8f2f73E",
