@@ -1,5 +1,5 @@
 {
-  "arbitrum": {
+  "arbitrum-one": {
     "SubgraphAvailabilityManager": {
       "address": "0x1cB555359319A94280aCf85372Ac2323AaE2f5fd",
       "startBlock": 223974980
