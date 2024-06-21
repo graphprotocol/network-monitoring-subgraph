@@ -10,7 +10,7 @@
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 network-monitoring-subgraph",
     "test": "yarn && yarn codegen && graph test",
     "deploy-arbitrum-sepolia": "yarn && yarn codegen && graph build --network arbitrum-sepolia && graph deploy --studio graph-monitoring-arb-sepolia",
-    "deploy-arbitrum": "yarn && yarn codegen && graph build --network arbitrum && graph deploy --studio graph-monitoring-arbitrum"
+    "deploy-arbitrum": "yarn && yarn codegen && graph build --network arbitrum-one && graph deploy --studio graph-monitoring-arbitrum"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.71.0",

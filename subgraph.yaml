@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: SubgraphAvailabilityManager
-    network: arbitrum-sepolia
+    network: arbitrum-one
     source:
       abi: SubgraphAvailabilityManager
-      address: "0x71D9aE967d1f31fbbD1817150902de78f8f2f73E"
-      startBlock: 49584061
+      address: "0x1cB555359319A94280aCf85372Ac2323AaE2f5fd"
+      startBlock: 223974980
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -30,11 +30,11 @@ dataSources:
       file: ./src/subgraph-availability-manager.ts
   - kind: ethereum
     name: SAODataEdge
-    network: arbitrum-sepolia
+    network: arbitrum-one
     source:
-      address: "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469"
       abi: SAODataEdge
-      startBlock: 49584061
+      address: "0xeD16cEbd4fa74a0016E1149cc03563Db4B223aec"
+      startBlock: 223927924
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
