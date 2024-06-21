@@ -1,12 +1,22 @@
 {
+  "arbitrum": {
+    "SubgraphAvailabilityManager": {
+      "address": "0x1cB555359319A94280aCf85372Ac2323AaE2f5fd",
+      "startBlock": 223974980
+    },
+    "SAODataEdge": {
+      "address": "0xeD16cEbd4fa74a0016E1149cc03563Db4B223aec",
+      "startBlock": 223927924
+    }
+  },
   "arbitrum-sepolia": {
     "SubgraphAvailabilityManager": {
-      "address": "0x9bDC3264596850E7F5d141A8D898dFA7001355CC",
-      "startBlock": 22552633
+      "address": "0x71D9aE967d1f31fbbD1817150902de78f8f2f73E",
+      "startBlock": 49584061
     },
     "SAODataEdge": {
       "address": "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469",
-      "startBlock": 25463619
+      "startBlock": 49584061
     }
   }
 }

@@ -7,8 +7,8 @@ dataSources:
     network: arbitrum-sepolia
     source:
       abi: SubgraphAvailabilityManager
-      address: "0x9bDC3264596850E7F5d141A8D898dFA7001355CC"
-      startBlock: 22552633
+      address: "0x71D9aE967d1f31fbbD1817150902de78f8f2f73E"
+      startBlock: 49584061
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -34,7 +34,7 @@ dataSources:
     source:
       address: "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469"
       abi: SAODataEdge
-      startBlock: 25463619
+      startBlock: 49584061
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
