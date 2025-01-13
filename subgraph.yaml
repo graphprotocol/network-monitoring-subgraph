@@ -48,3 +48,28 @@ dataSources:
         - event: Log(bytes)
           handler: handleLog
       file: ./src/sao-data-edge.ts
+  - kind: ethereum
+    name: RewardsManager
+    network: arbitrum-one
+    source:
+      address: "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525"
+      abi: RewardsManager
+      startBlock: 42449638
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ContractSynced
+        - ParameterUpdated
+        - RewardsAssigned
+        - RewardsDenied
+        - RewardsDenylistUpdated
+        - SetController
+      abis:
+        - name: RewardsManager
+          file: ./abis/RewardsManager.json
+      eventHandlers:
+        - event: RewardsDenylistUpdated(indexed bytes32,uint256)
+          handler: handleRewardsDenylistUpdated
+      file: ./src/rewards-manager.ts

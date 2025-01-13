@@ -2,6 +2,7 @@ type GlobalState @entity {
   id: ID!
   oracles: [Oracle!]! @derivedFrom(field: "state")
   activeOracles: [Oracle!]!
+  subgraphStates: [SubgraphState!]! @derivedFrom(field: "globalState")
 }
 
 type Oracle @entity {
@@ -19,6 +20,7 @@ type Oracle @entity {
 type OracleVote @entity(immutable: true) {
   id: ID!
   oracle: Oracle!
+  subgraphState: SubgraphState!
   subgraphDeploymentID: Bytes! # bytes32
   deny: Boolean! # bool
   timestamp: BigInt! # uint256
@@ -39,4 +41,20 @@ type OracleConfiguration @entity(immutable: true) {
   subgraphAvailabilityManagerContract: String!
   oracleIndex: String!
   createdAt: BigInt!
+}
+
+type SubgraphState @entity {
+  id: Bytes! # subgraphDeploymentID
+  globalState: GlobalState!
+  currentVotes: [OracleVote!]! @derivedFrom(field: "subgraphState")
+  rewardsDenylist: [RewardsDenylist!]! @derivedFrom(field: "subgraphState") # If empty subgraph was never denylisted
+  lastUpdated: BigInt!
+}
+
+type RewardsDenylist @entity(immutable: true) {
+  id: Bytes!
+  subgraphDeploymentID: Bytes! # bytes32
+  subgraphState: SubgraphState!
+  sinceBlock: BigInt! # uint256
+  timestamp: BigInt!
 }
