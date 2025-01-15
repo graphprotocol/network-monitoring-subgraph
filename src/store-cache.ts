@@ -1,4 +1,4 @@
-import { GlobalState, Oracle, OracleConfiguration, OracleVote, SubgraphState, RewardsDenylist } from "../generated/schema"
+import { GlobalState, Oracle, OracleConfiguration, OracleVote, SubgraphState, RewardsDenyLog } from "../generated/schema"
 import { log, Bytes } from "@graphprotocol/graph-ts"
 
 export class SafeMap<K, V> extends Map<K, V> {
@@ -13,7 +13,7 @@ export class StoreCache {
   oraclesConfigs: SafeMap<String, OracleConfiguration>;
   oracleVotes: SafeMap<String, OracleVote>;
   subgraphStates: SafeMap<Bytes, SubgraphState>;
-  rewardsDenylists: SafeMap<Bytes, RewardsDenylist>;
+  rewardsDenyLogs: SafeMap<Bytes, RewardsDenyLog>;
 
   constructor() {
     let state = GlobalState.load("0");
@@ -28,7 +28,7 @@ export class StoreCache {
     this.oraclesConfigs = new SafeMap<String, OracleConfiguration>();
     this.oracleVotes = new SafeMap<String, OracleVote>();
     this.subgraphStates = new SafeMap<Bytes, SubgraphState>();
-    this.rewardsDenylists = new SafeMap<Bytes, RewardsDenylist>();
+    this.rewardsDenyLogs = new SafeMap<Bytes, RewardsDenyLog>();
   }
 
   getGlobalState(): GlobalState {
@@ -81,15 +81,15 @@ export class StoreCache {
     return this.subgraphStates.safeGet(id)!;
   }
 
-  getRewardsDenylist(id: Bytes): RewardsDenylist {
-    if (this.rewardsDenylists.safeGet(id) == null) {
-      let denylist = RewardsDenylist.load(id);
-      if (denylist == null) {
-        denylist = new RewardsDenylist(id);
+  getRewardsDenyLogs(id: Bytes): RewardsDenyLog {
+    if (this.rewardsDenyLogs.safeGet(id) == null) {
+      let denyLog = RewardsDenyLog.load(id);
+      if (denyLog == null) {
+        denyLog = new RewardsDenyLog(id);
       }
-      this.rewardsDenylists.set(id, denylist);
+      this.rewardsDenyLogs.set(id, denyLog);
     }
-    return this.rewardsDenylists.safeGet(id)!;
+    return this.rewardsDenyLogs.safeGet(id)!;
   }
 
   commitChanges(): void {
@@ -115,9 +115,9 @@ export class StoreCache {
       states[i].save();
     }
 
-    let denylists = this.rewardsDenylists.values();
-    for (let i = 0; i < denylists.length; i++) {
-      denylists[i].save();
+    let denyLogs = this.rewardsDenyLogs.values();
+    for (let i = 0; i < denyLogs.length; i++) {
+      denyLogs[i].save();
     }
   }
 }

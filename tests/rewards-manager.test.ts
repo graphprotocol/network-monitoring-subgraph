@@ -24,18 +24,18 @@ describe("RewardsManager", () => {
     )
     handleRewardsDenylistUpdated(newRewardsDenylistUpdatedEvent)
 
-    assert.entityCount("RewardsDenylist", 1)
+    assert.entityCount("RewardsDenyLog", 1)
     assert.fieldEquals(
-      "RewardsDenylist",
+      "RewardsDenyLog",
       newRewardsDenylistUpdatedEvent.transaction.hash.concatI32(newRewardsDenylistUpdatedEvent.logIndex.toI32()).toHexString(),
       "subgraphDeploymentID",
       subgraphDeploymentID
     )
     assert.fieldEquals(
-      "RewardsDenylist",
+      "RewardsDenyLog",
       newRewardsDenylistUpdatedEvent.transaction.hash.concatI32(newRewardsDenylistUpdatedEvent.logIndex.toI32()).toHexString(),
-      "sinceBlock",
-      "100"
+      "deny",
+      "true"
     )
     // Verify SubgraphState relationship
     assert.entityCount("SubgraphState", 1)

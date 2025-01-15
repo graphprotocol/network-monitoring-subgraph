@@ -47,14 +47,14 @@ type SubgraphState @entity {
   id: Bytes! # subgraphDeploymentID
   globalState: GlobalState!
   currentVotes: [OracleVote!]! @derivedFrom(field: "subgraphState")
-  rewardsDenylist: [RewardsDenylist!]! @derivedFrom(field: "subgraphState") # If empty subgraph was never denylisted
+  rewardsDenyLog: [RewardsDenyLog!]! @derivedFrom(field: "subgraphState") # If empty subgraph was never denylisted
   lastUpdated: BigInt!
 }
 
-type RewardsDenylist @entity(immutable: true) {
+type RewardsDenyLog @entity(immutable: true) {
   id: Bytes!
+  deny: Boolean!
   subgraphDeploymentID: Bytes! # bytes32
   subgraphState: SubgraphState!
-  sinceBlock: BigInt! # uint256
   timestamp: BigInt!
 }

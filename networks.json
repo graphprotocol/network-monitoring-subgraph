@@ -10,7 +10,7 @@
     },
     "RewardsManager": {
       "address": "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525",
-      "startBlock": 42449638
+      "startBlock": 235253128
     }
   },
   "arbitrum-sepolia": {

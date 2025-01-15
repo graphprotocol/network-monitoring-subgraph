@@ -1,3 +1,4 @@
+import { BigInt } from "@graphprotocol/graph-ts"
 import {
   RewardsDenylistUpdated as RewardsDenylistUpdatedEvent,
 } from "../generated/RewardsManager/RewardsManager"
@@ -16,10 +17,10 @@ export function handleRewardsDenylistUpdated(
   subgraphState.globalState = state.id;
   subgraphState.lastUpdated = event.block.timestamp;
 
-  let entity = cache.getRewardsDenylist(id);
+  let entity = cache.getRewardsDenyLogs(id);
+  entity.deny = event.params.sinceBlock != BigInt.fromI32(0);
   entity.subgraphDeploymentID = subgraphDeploymentID;
   entity.subgraphState = subgraphState.id;
-  entity.sinceBlock = event.params.sinceBlock;
   entity.timestamp = event.block.timestamp;
 
   cache.commitChanges();

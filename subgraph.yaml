@@ -52,9 +52,9 @@ dataSources:
     name: RewardsManager
     network: arbitrum-one
     source:
-      address: "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525"
       abi: RewardsManager
-      startBlock: 42449638
+      address: "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525"
+      startBlock: 235253128
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
