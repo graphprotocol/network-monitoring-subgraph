@@ -27,18 +27,25 @@ export function handleOracleSet(event: OracleSetEvent): void {
 }
 
 export function handleOracleVote(event: OracleVoteEvent): void {
-  let subgraphDeploymentID = event.params.subgraphDeploymentID.toHexString();
+  let subgraphDeploymentID = event.params.subgraphDeploymentID;
   let oracleAddress = event.transaction.from.toHexString();
   let timestamp = event.params.timestamp.toString();
-  let voteId = getOracleVoteId(subgraphDeploymentID, oracleAddress, timestamp);
+  let voteId = getOracleVoteId(subgraphDeploymentID.toHexString(), oracleAddress, timestamp);
   
   let cache = new StoreCache();
+  let state = cache.getGlobalState();
+
+  let subgraphState = cache.getSubgraphState(subgraphDeploymentID);
+  subgraphState.globalState = state.id;
+  subgraphState.lastUpdated = event.block.timestamp;
+
   let oracle = cache.getOracle(event.transaction.from);
   let oracleVote = cache.getOracleVote(voteId);
   oracleVote.subgraphDeploymentID = event.params.subgraphDeploymentID
   oracleVote.deny = event.params.deny
   oracleVote.oracle = oracle.id
   oracleVote.timestamp = event.params.timestamp
+  oracleVote.subgraphState = subgraphState.id;
 
   cache.commitChanges();
 }

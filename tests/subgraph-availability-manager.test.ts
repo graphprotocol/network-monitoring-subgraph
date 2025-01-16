@@ -5,11 +5,11 @@ import {
   clearStore,
   afterEach
 } from "matchstick-as/assembly/index"
-import { Address, BigInt, log } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts"
 import { handleOracleSet, handleOracleVote } from "../src/subgraph-availability-manager"
 import { createOracleSetEvent, createOracleVoteEvent } from "./subgraph-availability-manager-utils"
 import { getOracleVoteId } from "../src/helpers"
-import { Oracle, GlobalState } from "../generated/schema"
+import { Oracle, GlobalState, SubgraphState } from "../generated/schema"
 
 const oracleID = "0x0000000000000000000000000000000000000004"
 const oracleAddress = Address.fromString(oracleID)
@@ -71,5 +71,15 @@ describe("ORACLE", () => {
     assert.fieldEquals("OracleVote", oracleVoteID, "deny", "true")
     assert.fieldEquals("OracleVote", oracleVoteID, "oracle", oracleID)
     assert.fieldEquals("OracleVote", oracleVoteID, "timestamp", "300")
+
+    // Verify SubgraphState relationship
+    assert.entityCount("SubgraphState", 1)
+    assert.fieldEquals("SubgraphState", subgraphDeploymentID, "id", subgraphDeploymentID)
+    assert.fieldEquals(
+      "SubgraphState",
+      subgraphDeploymentID,
+      "lastUpdated",
+      newOracleVoteEvent.block.timestamp.toString()
+    )
   })
 })

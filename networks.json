@@ -7,6 +7,10 @@
     "SAODataEdge": {
       "address": "0xeD16cEbd4fa74a0016E1149cc03563Db4B223aec",
       "startBlock": 223927924
+    },
+    "RewardsManager": {
+      "address": "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525",
+      "startBlock": 235253128
     }
   },
   "arbitrum-sepolia": {
@@ -17,6 +21,10 @@
     "SAODataEdge": {
       "address": "0xB61AF143c79Cbdd68f179B657AaC86665CC2B469",
       "startBlock": 49584061
+    },
+    "RewardsManager": {
+      "address": "0x1F49caE7669086c8ba53CC35d1E9f80176d67E79",
+      "startBlock": 570719
     }
   }
 }

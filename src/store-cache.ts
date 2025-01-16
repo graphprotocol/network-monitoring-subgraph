@@ -1,4 +1,4 @@
-import { GlobalState, Oracle, OracleConfiguration, OracleVote } from "../generated/schema"
+import { GlobalState, Oracle, OracleConfiguration, OracleVote, SubgraphState, RewardsDenyLog } from "../generated/schema"
 import { log, Bytes } from "@graphprotocol/graph-ts"
 
 export class SafeMap<K, V> extends Map<K, V> {
@@ -12,6 +12,8 @@ export class StoreCache {
   oracles: SafeMap<Bytes, Oracle>;
   oraclesConfigs: SafeMap<String, OracleConfiguration>;
   oracleVotes: SafeMap<String, OracleVote>;
+  subgraphStates: SafeMap<Bytes, SubgraphState>;
+  rewardsDenyLogs: SafeMap<Bytes, RewardsDenyLog>;
 
   constructor() {
     let state = GlobalState.load("0");
@@ -25,6 +27,8 @@ export class StoreCache {
     this.oracles = new SafeMap<Bytes, Oracle>();
     this.oraclesConfigs = new SafeMap<String, OracleConfiguration>();
     this.oracleVotes = new SafeMap<String, OracleVote>();
+    this.subgraphStates = new SafeMap<Bytes, SubgraphState>();
+    this.rewardsDenyLogs = new SafeMap<Bytes, RewardsDenyLog>();
   }
 
   getGlobalState(): GlobalState {
@@ -66,6 +70,28 @@ export class StoreCache {
     return this.oracleVotes.safeGet(id)!;
   }
 
+  getSubgraphState(id: Bytes): SubgraphState {
+    if (this.subgraphStates.safeGet(id) == null) {
+      let state = SubgraphState.load(id);
+      if (state == null) {
+        state = new SubgraphState(id);
+      }
+      this.subgraphStates.set(id, state);
+    }
+    return this.subgraphStates.safeGet(id)!;
+  }
+
+  getRewardsDenyLogs(id: Bytes): RewardsDenyLog {
+    if (this.rewardsDenyLogs.safeGet(id) == null) {
+      let denyLog = RewardsDenyLog.load(id);
+      if (denyLog == null) {
+        denyLog = new RewardsDenyLog(id);
+      }
+      this.rewardsDenyLogs.set(id, denyLog);
+    }
+    return this.rewardsDenyLogs.safeGet(id)!;
+  }
+
   commitChanges(): void {
     this.state.save();
 
@@ -82,6 +108,16 @@ export class StoreCache {
     let votes = this.oracleVotes.values();
     for (let i = 0; i < votes.length; i++) {
       votes[i].save();
+    }
+
+    let states = this.subgraphStates.values();
+    for (let i = 0; i < states.length; i++) {
+      states[i].save();
+    }
+
+    let denyLogs = this.rewardsDenyLogs.values();
+    for (let i = 0; i < denyLogs.length; i++) {
+      denyLogs[i].save();
     }
   }
 }
