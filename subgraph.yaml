@@ -19,6 +19,8 @@ dataSources:
         - OracleSet
         - OracleVote
         - VoteTimeLimitSet
+        - Activity
+        - ActivityDay
       abis:
         - name: SubgraphAvailabilityManager
           file: ./abis/SubgraphAvailabilityManager.json
@@ -48,3 +50,136 @@ dataSources:
         - event: Log(bytes)
           handler: handleLog
       file: ./src/sao-data-edge.ts
+
+  # ---------------------------------------------------------------------------------------
+  # Activity: who last caused each event, and when. Every handler below calls the generic
+  # recordActivity (src/activity.ts); none reads the event's parameters. Contracts older than
+  # this subgraph start at the same block as the data sources above, since last-seen tracking
+  # does not need history from before then.
+  # ---------------------------------------------------------------------------------------
+  - kind: ethereum
+    name: BillingContract
+    network: arbitrum-one
+    source:
+      abi: BillingContract
+      address: "0x1b07d3344188908fb6deceac381f3ee63c48477a"
+      startBlock: 223927924
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activity
+        - ActivityDay
+      abis:
+        - name: BillingContract
+          file: ./abis/BillingContract.json
+      eventHandlers:
+        - event: TokensPulled(indexed address,uint256)
+          handler: handleTokensPulled
+      file: ./src/activity-handlers.ts
+  - kind: ethereum
+    name: PaymentsEscrow
+    network: arbitrum-one
+    source:
+      abi: PaymentsEscrow
+      address: "0xf6Fcc27aAf1fcD8B254498c9794451d82afC673E"
+      startBlock: 397491106
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activity
+        - ActivityDay
+      abis:
+        - name: PaymentsEscrow
+          file: ./abis/PaymentsEscrow.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,indexed address,uint256)
+          handler: handleEscrowDeposit
+      file: ./src/activity-handlers.ts
+  - kind: ethereum
+    name: EBODataEdge
+    network: arbitrum-one
+    source:
+      abi: EBODataEdge
+      address: "0x633bb9790d7c4c59991cebd377c0ed6501a35ebe"
+      startBlock: 223927924
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activity
+        - ActivityDay
+      abis:
+        - name: EBODataEdge
+          file: ./abis/EBODataEdge.json
+      eventHandlers:
+        - event: Log(bytes)
+          handler: handleEBOLog
+      file: ./src/activity-handlers.ts
+  - kind: ethereum
+    name: RewardsEligibilityOracleA
+    network: arbitrum-one
+    source:
+      abi: RewardsEligibilityOracle
+      address: "0x02753BaE61C08AbD4351Bce7F48524935C2Cc78E"
+      startBlock: 486895566
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activity
+        - ActivityDay
+      abis:
+        - name: RewardsEligibilityOracle
+          file: ./abis/RewardsEligibilityOracle.json
+      eventHandlers:
+        - event: IndexerEligibilityRenewed(indexed address,indexed address)
+          handler: handleIndexerEligibilityRenewed
+      file: ./src/activity-handlers.ts
+  - kind: ethereum
+    name: RewardsEligibilityOracleB
+    network: arbitrum-one
+    source:
+      abi: RewardsEligibilityOracle
+      address: "0xeebc4919a239c1315a7e0652e692812719bad591"
+      startBlock: 486895606
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activity
+        - ActivityDay
+      abis:
+        - name: RewardsEligibilityOracle
+          file: ./abis/RewardsEligibilityOracle.json
+      eventHandlers:
+        - event: IndexerEligibilityRenewed(indexed address,indexed address)
+          handler: handleIndexerEligibilityRenewed
+      file: ./src/activity-handlers.ts
+  - kind: ethereum
+    name: L2Curation
+    network: arbitrum-one
+    source:
+      abi: L2Curation
+      address: "0x22d78fb4bc72e191C765807f8891B5e1785C8014"
+      startBlock: 223927924
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Activity
+        - ActivityDay
+      abis:
+        - name: L2Curation
+          file: ./abis/L2Curation.json
+      eventHandlers:
+        - event: Signalled(indexed address,indexed bytes32,uint256,uint256,uint256)
+          handler: handleCurationSignalled
+      file: ./src/activity-handlers.ts

@@ -7,6 +7,7 @@ import {
 import { Oracle } from "../generated/schema"
 import { StoreCache } from "./store-cache";
 import { getOracleVoteId } from "./helpers";
+import { recordActivity } from "./activity";
 
 export function handleOracleSet(event: OracleSetEvent): void {
   let oracleIndex = event.params.index.toString();
@@ -41,6 +42,8 @@ export function handleOracleVote(event: OracleVoteEvent): void {
   oracleVote.timestamp = event.params.timestamp
 
   cache.commitChanges();
+
+  recordActivity(event, "OracleVote(bytes32,bool,uint256,uint256)");
 }
 
 function replaceActiveOracle(newOracle: Oracle, cache: StoreCache): void {
