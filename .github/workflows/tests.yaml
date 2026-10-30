@@ -6,7 +6,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # graph-cli 0.71 picks the matchstick binary from the OS version and only knows Ubuntu 22
+    # for matchstick 0.6; ubuntu-latest fails with "Unsupported platform".
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout

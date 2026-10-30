@@ -40,3 +40,50 @@ type OracleConfiguration @entity(immutable: true) {
   oracleIndex: String!
   createdAt: BigInt!
 }
+
+"""
+When an account last caused a given event on a given contract.
+
+One entity per (contract, event, account). The account is the transaction sender: the wallet
+that caused the event, whichever contract emitted it. The id is built from values the reader
+already has, so "when did X last do Y on Z" is one lookup:
+
+  <emitter>-<topic0>-<account>, all as lowercase 0x hex.
+
+An entity with account 0x0000000000000000000000000000000000000000 tracks the same event from
+any sender.
+"""
+type Activity @entity {
+  id: ID!
+  "Contract that emitted the event"
+  emitter: Bytes!
+  "keccak256 of the event signature"
+  topic0: Bytes!
+  "Event signature, e.g. OracleVote(bytes32,bool,uint256,uint256)"
+  event: String!
+  "Transaction sender, or the zero address for the any-sender entity"
+  account: Bytes!
+  "Events seen. One transaction can emit several."
+  count: BigInt!
+  firstBlock: BigInt!
+  firstTimestamp: BigInt!
+  lastBlock: BigInt!
+  lastTimestamp: BigInt!
+  lastTransaction: Bytes!
+  days: [ActivityDay!]! @derivedFrom(field: "activity")
+}
+
+"""
+Events per UTC day for one Activity, so a drop in rate is visible before the account goes
+silent. Only days with at least one event exist.
+"""
+type ActivityDay @entity {
+  "<activity id>-<day>"
+  id: ID!
+  activity: Activity!
+  "Days since the Unix epoch"
+  day: Int!
+  "Unix timestamp of the start of the day"
+  date: BigInt!
+  count: BigInt!
+}
