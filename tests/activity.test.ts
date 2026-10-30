@@ -7,10 +7,10 @@ import {
 } from "matchstick-as/assembly/index"
 import { Address, BigInt, ByteArray, Bytes, crypto } from "@graphprotocol/graph-ts"
 import { handleTokensPulled } from "../src/activity-handlers"
-import { handleOracleVote } from "../src/subgraph-availability-manager"
+import { handleOracleSet, handleOracleVote } from "../src/subgraph-availability-manager"
 import { getActivityId } from "../src/activity"
 import { createTokensPulledEvent } from "./activity-utils"
-import { createOracleVoteEvent } from "./subgraph-availability-manager-utils"
+import { createOracleSetEvent, createOracleVoteEvent } from "./subgraph-availability-manager-utils"
 import { Activity } from "../generated/schema"
 
 const billing = Address.fromString("0x1b07d3344188908fb6deceac381f3ee63c48477a")
@@ -87,6 +87,8 @@ describe("Activity", () => {
 
   test("oracle votes are tracked as activity too", () => {
     let oracle = Address.fromString("0x0000000000000000000000000000000000000004")
+    // As on chain, the oracle is registered before it votes.
+    handleOracleSet(createOracleSetEvent(BigInt.fromI32(0), oracle))
     let event = createOracleVoteEvent(
       oracle,
       Bytes.fromHexString("0x0000000000000000000000000000000000000005"),
