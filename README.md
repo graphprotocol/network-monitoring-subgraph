@@ -60,6 +60,29 @@ Contracts older than this subgraph start indexing at the same block as the SAM d
 (mid-2024), not at their deployment. Last-seen tracking does not need older history, and starting
 earlier would make syncing much slower. `count` and `firstBlock` therefore count from that point.
 
+### Solo deployments
+
+A deployment is **solo** when exactly one indexer has an open allocation on it, it has curation
+signal, and it is not denied rewards (the SAO denylist). No indexer is treated specially: the
+upgrade indexer counts like any other, and filtering it out is left to whoever reads the data.
+
+- `Deployment`: `activeIndexers` / `activeIndexerCount`, `signal` (curation shares),
+  `signalledTokens` (GRT), `denied`, and `soloIndexer` while it is solo.
+- `DeploymentIndexer`: open allocations of one indexer on one deployment.
+- `Indexer`: `soloCount` and `soloSignalledTokens`, kept current on every allocation, signal
+  and denial change.
+
+```graphql
+{ indexers(orderBy: soloCount, orderDirection: desc, where: { soloCount_gt: 0 }) {
+    id soloCount soloSignalledTokens } }
+```
+
+Indexed from the SubgraphService's launch (`AllocationCreated`, `AllocationClosed`), with
+L2Curation (`Signalled`, `Burned`, `Collected`) and RewardsManager (`RewardsDenylistUpdated`)
+from the same block. Signal and denial that predate it are read from the contracts
+(`getCurationPoolSignal`, `getCurationPoolTokens`, `isDenied`) the first time a deployment is
+seen, and curation events re-read the pool rather than applying deltas.
+
 ## Development
 
 ```sh

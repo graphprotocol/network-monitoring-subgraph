@@ -31,6 +31,18 @@
     "L2Curation": {
       "address": "0x22d78fb4bc72e191C765807f8891B5e1785C8014",
       "startBlock": 223927924
+    },
+    "SubgraphService": {
+      "address": "0xb2Bb92d0DE618878E438b55D5846cfecD9301105",
+      "startBlock": 397492865
+    },
+    "Curation": {
+      "address": "0x22d78fb4bc72e191C765807f8891B5e1785C8014",
+      "startBlock": 397492865
+    },
+    "RewardsManager": {
+      "address": "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525",
+      "startBlock": 397492865
     }
   },
   "arbitrum-sepolia": {
@@ -65,6 +77,18 @@
     "BillingContract": {
       "address": "0xDb29A6dD3028e8cb8c7Db27E36701D533BE99EB6",
       "startBlock": 49584061
+    },
+    "SubgraphService": {
+      "address": "0xc24A3dAC5d06d771f657A48B20cE1a671B78f26b",
+      "startBlock": 201859812
+    },
+    "Curation": {
+      "address": "0xDe761f075200E75485F4358978FB4d1dC8644FD5",
+      "startBlock": 201859812
+    },
+    "RewardsManager": {
+      "address": "0x1F49caE7669086c8ba53CC35d1E9f80176d67E79",
+      "startBlock": 201859812
     }
   }
 }

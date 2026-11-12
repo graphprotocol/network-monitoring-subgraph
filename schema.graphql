@@ -87,3 +87,46 @@ type ActivityDay @entity {
   date: BigInt!
   count: BigInt!
 }
+
+"""
+A subgraph deployment, with what decides whether it is solo: exactly one indexer has an open
+allocation on it, it has curation signal, and it is not denied rewards. Tracked from the
+SubgraphService's launch (Horizon). Signal and denial that predate it are read from the
+contracts the first time a deployment is seen.
+"""
+type Deployment @entity {
+  "bytes32 subgraph deployment id"
+  id: Bytes!
+  "Indexers with at least one open allocation on it. No indexer is treated specially."
+  activeIndexers: [Bytes!]!
+  activeIndexerCount: Int!
+  "Curation shares"
+  signal: BigInt!
+  "GRT in the curation pool"
+  signalledTokens: BigInt!
+  "Denied indexing rewards by the RewardsManager denylist (the SAO)"
+  denied: Boolean!
+  "The indexer it is solo for, while it is solo"
+  soloIndexer: Indexer
+  indexers: [DeploymentIndexer!]! @derivedFrom(field: "deployment")
+}
+
+"""Open allocations of one indexer on one deployment. An indexer can hold several."""
+type DeploymentIndexer @entity {
+  "deployment id ++ indexer address"
+  id: Bytes!
+  deployment: Deployment!
+  indexer: Indexer!
+  openAllocations: Int!
+}
+
+"""An indexer, with its solo deployments. Kept current as allocations, signal and denial change."""
+type Indexer @entity {
+  "indexer address"
+  id: Bytes!
+  "Deployments where it is the only indexer allocated, that have signal and are not denied"
+  soloCount: Int!
+  "GRT signalled on those deployments"
+  soloSignalledTokens: BigInt!
+  soloDeployments: [Deployment!]! @derivedFrom(field: "soloIndexer")
+}
