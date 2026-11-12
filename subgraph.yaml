@@ -50,13 +50,6 @@ dataSources:
         - event: Log(bytes)
           handler: handleLog
       file: ./src/sao-data-edge.ts
-
-  # ---------------------------------------------------------------------------------------
-  # Activity: who last caused each event, and when. Every handler below calls the generic
-  # recordActivity (src/activity.ts); none reads the event's parameters. Contracts older than
-  # this subgraph start at the same block as the data sources above, since last-seen tracking
-  # does not need history from before then.
-  # ---------------------------------------------------------------------------------------
   - kind: ethereum
     name: BillingContract
     network: arbitrum-one
@@ -183,3 +176,89 @@ dataSources:
         - event: Signalled(indexed address,indexed bytes32,uint256,uint256,uint256)
           handler: handleCurationSignalled
       file: ./src/activity-handlers.ts
+  - kind: ethereum
+    name: SubgraphService
+    network: arbitrum-one
+    source:
+      abi: SubgraphService
+      address: "0xb2Bb92d0DE618878E438b55D5846cfecD9301105"
+      startBlock: 397492865
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deployment
+        - DeploymentIndexer
+        - Indexer
+      abis:
+        - name: SubgraphService
+          file: ./abis/SubgraphService.json
+        - name: Curation
+          file: ./abis/Curation.json
+        - name: RewardsManager
+          file: ./abis/RewardsManager.json
+      eventHandlers:
+        - event: AllocationCreated(indexed address,indexed address,indexed
+            bytes32,uint256,uint256)
+          handler: handleAllocationCreated
+        - event: AllocationClosed(indexed address,indexed address,indexed
+            bytes32,uint256,bool)
+          handler: handleAllocationClosed
+      file: ./src/solo.ts
+  - kind: ethereum
+    name: Curation
+    network: arbitrum-one
+    source:
+      abi: Curation
+      address: "0x22d78fb4bc72e191C765807f8891B5e1785C8014"
+      startBlock: 397492865
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deployment
+        - DeploymentIndexer
+        - Indexer
+      abis:
+        - name: SubgraphService
+          file: ./abis/SubgraphService.json
+        - name: Curation
+          file: ./abis/Curation.json
+        - name: RewardsManager
+          file: ./abis/RewardsManager.json
+      eventHandlers:
+        - event: Signalled(indexed address,indexed bytes32,uint256,uint256,uint256)
+          handler: handleSignalled
+        - event: Burned(indexed address,indexed bytes32,uint256,uint256)
+          handler: handleBurned
+        - event: Collected(indexed bytes32,uint256)
+          handler: handleCollected
+      file: ./src/solo.ts
+  - kind: ethereum
+    name: RewardsManager
+    network: arbitrum-one
+    source:
+      abi: RewardsManager
+      address: "0x971B9d3d0Ae3ECa029CAB5eA1fB0F72c85e6a525"
+      startBlock: 397492865
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deployment
+        - DeploymentIndexer
+        - Indexer
+      abis:
+        - name: SubgraphService
+          file: ./abis/SubgraphService.json
+        - name: Curation
+          file: ./abis/Curation.json
+        - name: RewardsManager
+          file: ./abis/RewardsManager.json
+      eventHandlers:
+        - event: RewardsDenylistUpdated(indexed bytes32,uint256)
+          handler: handleRewardsDenylistUpdated
+      file: ./src/solo.ts
